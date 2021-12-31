@@ -1,0 +1,2 @@
+if [[ "$(podman images -q localhost/initd-985:latest 2> /dev/console)" == "" ]]; then podman build --tag initd-985 --layers=false -f docker.arch; fi
+podman run -it --rm -v $(pwd):/app:Z localhost/initd-985:latest

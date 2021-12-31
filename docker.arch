@@ -1,0 +1,39 @@
+FROM archlinux:latest
+LABEL maintainer="Unknown"
+LABEL version="1.37"
+LABEL description="To compile and package rust program for arch linux on x64 architecture"
+
+RUN cat /etc/pacman.d/mirrorlist
+RUN printf 'Server = ftp://mirror.csclub.uwaterloo.ca/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
+
+# install gcc
+RUN pacman --noconfirm -Syyu rustup gcc pkg-config \
+    && rm /var/lib/pacman/sync/* \
+    && rm /var/cache/pacman/pkg/*
+
+ARG RUST_VERSION=stable
+
+# install rustup
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
+ENV PATH /home/builduser/.cargo/bin:$PATH
+RUN rustup install --profile minimal $RUST_VERSION
+RUN rustup default $RUST_VERSION
+
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Create appuser
+ENV USER=appuser
+ENV UID=10001
+
+# Replace init program
+RUN ln -sf /app/target/debug/initd /sbin/init
+
+WORKDIR /app
+ENV CARGO_HOME=/app/target
+ENV TARGET_DIR=/app/target
+
+
+ENTRYPOINT ["cargo"]
+CMD ["run"]
+
+# run -it --rm -v $(pwd):/app:Z app-initd
