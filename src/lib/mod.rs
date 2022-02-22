@@ -44,7 +44,7 @@ macro_rules! str {
 
 pub(crate) mod log;
 pub(crate) mod utils;
-pub(crate) use utils::Dir as Dir;
+
 
 
 pub(crate) mod fs;

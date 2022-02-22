@@ -3,15 +3,15 @@ mod lib;
 extern crate alloc;
 
 use std::ffi::c_void;
-use std::fmt::format;
+
 use std::mem::MaybeUninit;
-use std::ops::Mul;
-use std::os::unix::prelude::IntoRawFd;
+
+
 use std::ptr::NonNull;
 
 
 use lib::*;
-use lib::uev::uev_ctx_t;
+
 
 
 
@@ -98,6 +98,11 @@ fn wait<'a>(fd: i32) -> Option<&'a UEvent> {
     }
 
     return None;
+}
+
+
+fn uev_add_watcher(fd: i32, path: &str) -> i32 {
+    sys!(inotify_add_watch(fd, c_str!(path), libc::IN_CREATE | libc::IN_DELETE))
 }
 
 
